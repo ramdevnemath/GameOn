@@ -1,6 +1,7 @@
 import { validationResult } from "express-validator"
 import userSchema from "../models/userModel.js"
 import { generateToken } from "../utils/jwt.js"
+import mailTransporter from "../utils/nodeMailer.js"
 
 export const register = async (req, res) => {
     const errors = validationResult(req)
@@ -71,10 +72,10 @@ export const userLogin = async (req, res) => {
 }
 
 export const googleAuth = async (req, res) => {
-    const { given_name, family_name , email, picture } = req.body
+    const { given_name, family_name, email, picture } = req.body
     try {
-        const userExists = await userSchema.findOne({email})
-        if(userExists) {
+        const userExists = await userSchema.findOne({ email })
+        if (userExists) {
             const payload = {
                 id: userExists._id,
                 role: process.env.USER_CONST
@@ -83,10 +84,10 @@ export const googleAuth = async (req, res) => {
             return res.status(200).json({ status: "ok", userExists, token })
         } else {
             const user = await userSchema.create({
-                fname:given_name,
-                lname:family_name,
-                email:email,
-                picture:picture
+                fname: given_name,
+                lname: family_name,
+                email: email,
+                picture: picture
             })
             const payload = {
                 id: user._id,
@@ -98,5 +99,50 @@ export const googleAuth = async (req, res) => {
     } catch (error) {
         console.error(error)
         res.status(500).json({ status: "error", error: "Internal Server Error" })
+    }
+}
+
+export const resetPassword = async (req, res) => {
+    const { email } = req.body
+    try {
+        const user = await userSchema.findOne({ email: email })
+        if (!user) {
+            return res.status(401).json({ status: "error", message: "User does not exists" })
+        }
+        const payload = {
+            id: user._id,
+            role: process.env.USER_CONST
+        }
+        const token = generateToken(payload)
+        userSchema.resetPasswordToken = token
+        user.resetPasswordExpires = Date.now() + 2*60*60*1000
+        await user.save()
+        mailTransporter(token, user)
+        res.status(200).json({ status: "success", message: "Reset token generated and sent to the user" });
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ status: "error", error: "Internal Server Error" })
+    }
+}
+
+export const changePassword = async (req, res) => {
+    const {password, id, token} = req.body
+    try {
+        if(!token) {
+            console.log("Token missing")
+            return res.status(401).json({ status: "error", message: "Token has expired" })
+        }
+        const user = await userSchema.findByIdAndUpdate(
+            id, 
+            {password: password},
+            {
+                new: true,
+                runValidators: true
+            }
+        )
+        await user.save()
+        return res.status(200).json({ status: "ok", user, token })
+    } catch (error) {
+        console.error("Error updating password", error.message)
     }
 }

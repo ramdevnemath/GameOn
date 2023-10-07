@@ -5,7 +5,7 @@ import { BeatLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import GoogleLogin from './GoogleLogin';
+import GoogleLogin from '../../components/user/GoogleLogin';
 import axios from 'axios';
 
 function UserLogin() {
@@ -96,8 +96,8 @@ function UserLogin() {
                                         <button type="submit" className="bg-blue-500 rounded hover:bg-blue-700 text-white font-bold py-2 px-4 block w-full mb-4">
                                             Login
                                         </button>
-                                        <div className="text-center">
-                                            <p>Or</p>
+                                        <Link to={ "/forgot-password" }>Forgot password?</Link>
+                                        <div className="text-center mt-3">
                                             <button><GoogleLogin setLoader={setLoader}/></button>
                                         </div>
                                         <div className="flex justify-center mt-5">

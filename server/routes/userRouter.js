@@ -14,11 +14,10 @@ userRouter.post('/register',
     ], 
     userController.register
 )
-
 userRouter.get('/', userController.homePage)
-
 userRouter.post('/auth/login', userController.userLogin)
-
 userRouter.post('/auth/google', userController.googleAuth)
+userRouter.post('/password-reset', userController.resetPassword)
+userRouter.post('/post-password-reset', userController.changePassword)
 
 export default userRouter
