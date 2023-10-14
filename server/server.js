@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: false }))
 connectDB()
 
 app.use("/api/users", userRouter)
-app.use("/api/vendor", vendorRouter)
+app.use("/api/vendors", vendorRouter)
 app.use("/api/admin", adminRouter)
 
 const port = process.env.PORT;

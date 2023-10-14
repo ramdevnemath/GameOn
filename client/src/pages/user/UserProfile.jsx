@@ -1,53 +1,35 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { BeatLoader } from "react-spinners"
-import { useNavigate } from 'react-router-dom';
-import { useToasts } from "react-toast-notifications";
+import React, { useState } from 'react'
 import axios from 'axios';
+import { BeatLoader } from 'react-spinners';
+import NavBar from '../../components/user/NavBar';
+import { useSelector } from 'react-redux';
 
-function UserSignUp() {
+function UserProfile() {
 
-    const navigate = useNavigate()
-    const { addToast } = useToasts()
+    const user = useSelector(state => state.user)
 
     const sectionStyle = {
-        backgroundImage: `url("https://downloader.la/temp/[Downloader.la]-651e6a21ea75d.jpg")`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
         height: '100vh',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
     };
 
+    const [loader, setLoader] = useState(false)
     const [formData, setFormData] = useState({
-        fname: '',
-        lname: '',
-        email: '',
-        phone: '',
-        password: ''
+        fname: "",
+        lname: "",
+        email: "",
+        phone: "",
     })
 
-    const [loader, setLoader] = useState(false)
-
-    const registerUser = async (e) => {
+    const updateProfile = async (e)=> {
         e.preventDefault()
         try {
             setLoader(true)
-            const response = await axios.post("http://localhost:7000/api/users/register", formData)
-            if (response.status === 200) {
-                addToast('User registered successfully!', { appearance: 'success', autoDismiss: true });
-                navigate('/user/login')
-            }
+            await axios.post(`http://localhost:7000/api/users/update-profile/${user.user._id}`, formData)
         } catch (error) {
-            if (error?.response?.status === 400) {
-                const errorData = error.response.data.errors;
-                let errorMsg = errorData.map(e => e?.msg || e)
-                errorMsg.forEach(e => addToast(e,{ appearance: "error", autoDismiss: true }))
-            } else {
-                console.error(error?.response?.data?.error)
-                addToast('An error occurred while registering. Please try again later.', { appearance: 'error', autoDismiss: true });
-            }
+            console.error(error)
         } finally {
             setLoader(false)
         }
@@ -55,6 +37,10 @@ function UserSignUp() {
 
     return (
         <>
+            <NavBar/>
+            <h2 className="text-title-md2 font-bold text-black dark:text-white">
+                Profile
+            </h2>
             <section className="text-center text-lg-start relative" style={sectionStyle}>
                 {loader && (
                     <div className="absolute top-0 right-0 bottom-0 left-0 flex items-center justify-center bg-black/90 z-40">
@@ -67,7 +53,7 @@ function UserSignUp() {
                             <div className="card cascading-right" style={{ background: 'hsla(0, 0%, 100%, 0.55)', backdropFilter: 'blur(4px)', width: '500px' }}>
                                 <div className="card-body p-5 shadow-5 text-center">
                                     <h2 className="fw-bold mb-5">Sign Up now</h2>
-                                    <form onSubmit={registerUser}>
+                                    <form onSubmit={ updateProfile }>
                                         <div className="row">
                                             <div className="col-md-6 mb-4">
                                                 <div className="form-outline">
@@ -134,17 +120,8 @@ function UserSignUp() {
                                         </div>
 
                                         <button type="submit" className="bg-green-500 hover:bg-blue-700 text-white font-bold py-1.5 px-3 r">
-                                            Sign up
+                                            Update
                                         </button>
-
-                                        <div className="flex justify-center mt-5">
-                                            <p>Already have an account?</p>
-                                            <Link to={'/user/login'}>
-                                                <button type='submit' className='text-blue-500 hover:text-blue-700 ml-1'>
-                                                    Login
-                                                </button>
-                                            </Link>
-                                        </div>
                                     </form>
                                 </div>
                             </div>
@@ -156,4 +133,4 @@ function UserSignUp() {
     )
 }
 
-export default UserSignUp
+export default UserProfile

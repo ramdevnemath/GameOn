@@ -7,22 +7,20 @@ import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../redux/slices/userSlice';
 import axios from 'axios';
 
-
 const LoginWithGoogle = ({setLoader}) => {
 
-    const { addToast } = useToasts();
-    const navigate = useNavigate();
+    const { addToast } = useToasts()
+    const navigate = useNavigate()
     const dispatch = useDispatch()
 
     const handleGoogleLoginSuccess = async (credentialResponse) => {
         try {
             var decodedToken = jwt_decode(credentialResponse.credential);
-            console.log(decodedToken, "❤️❤️❤️");
             setLoader(true)
             const response = await axios.post("http://localhost:7000/api/users/auth/google", decodedToken)
             if(response.status === 200) {
                 dispatch(setCredentials({ user: response.data.user || response.data.userExists , token: response.data.token }))
-                addToast("Google login successful", { appearance: 'success' });
+                addToast("Google login successful", { appearance: 'success', autoDismiss: true });
                 navigate('/');
                 console.log("Google login successful", credentialResponse);
             }
@@ -31,7 +29,7 @@ const LoginWithGoogle = ({setLoader}) => {
                 const errorData = error.response.data.errors;
                 let errorMsg = errorData.map(e => e?.msg || e)
                 setLoader(false)
-                errorMsg.forEach(e => addToast(e, { appearance: "error" }))
+                errorMsg.forEach(e => addToast(e, { appearance: "error", autoDismiss: true }))
             } else {
                 const err = error?.response?.data?.error
                 console.error(err)
@@ -45,7 +43,7 @@ const LoginWithGoogle = ({setLoader}) => {
 
     const handleGoogleLoginFailure = (error) => {
         console.error("Google login failed", error);
-        addToast("Google login failed", { appearance: 'error' });
+        addToast("Google login failed", { appearance: 'error', autoDismiss: true });
     };
 
     return (

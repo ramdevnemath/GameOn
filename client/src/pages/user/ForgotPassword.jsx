@@ -30,23 +30,23 @@ function ForgotPassword() {
         try {
             const response = await axios.post('http://localhost:7000/api/users/password-reset', { email });
             if (response.status === 200) {
-                addToast('Verification link has been sent to your email successfully!', { appearance: 'success' });
+                addToast('Verification link has been sent to your email successfully!', { appearance: 'success', autoDismiss: true });
             } else {
-                addToast('Failed to send verification email.', { appearance: 'error' });
+                addToast('Failed to send verification email.', { appearance: 'error', autoDismiss: true });
             }
         } catch (error) {
-            addToast('Error sending verification email. Please try again later.', { appearance: 'error' });
+            addToast('Error sending verification email. Please try again later.', { appearance: 'error', autoDismiss: true });
         } finally {
             setLoader(false);
             setIsButtonDisabled(false);
-            navigate('/login')
+            navigate('/user/login')
         }
     };
 
     return (
         <section className="text-center text-lg-start" style={sectionStyle}>
             {loader && (
-                <div className="absolute top-0 right-0 bottom-0 left-0 flex items-center justify-center bg-black/80 z-40">
+                <div className="absolute top-0 right-0 bottom-0 left-0 flex items-center justify-center bg-black/90 z-40">
                     <BeatLoader color="#36d7b7" />
                 </div>
             )}

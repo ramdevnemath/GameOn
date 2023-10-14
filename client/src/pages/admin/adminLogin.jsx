@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { setCredentials } from '../../redux/slices/userSlice';
+import { setCredentials } from '../../redux/slices/adminSlice';
 import { BeatLoader } from 'react-spinners';
 import { useToasts } from 'react-toast-notifications';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import GoogleLogin from '../../components/user/GoogleLogin';
 import axios from 'axios';
 
 function UserLogin() {
@@ -13,7 +12,7 @@ function UserLogin() {
     const navigate = useNavigate()
 
     const sectionStyle = {
-        backgroundImage: `url('../../images/Background.jpg)`,
+        backgroundImage: `url("https://downloader.la/temp/[Downloader.la]-652162442b70a.jpg")`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '100vh',
@@ -24,35 +23,33 @@ function UserLogin() {
 
     const [loader, setLoader] = useState(false)
     const [formData, setFormData] = useState({
-        email: "",
+        username: "",
         password: ""
     })
     const dispatch = useDispatch()
 
-    const loginUser = async (e) => {
+    const loginAdmin = async (e) => {
         e.preventDefault()
         try {
             setLoader(true)
-            const response = await axios.post("http://localhost:7000/api/users/auth/login", formData)
+            const response = await axios.post("http://localhost:7000/api/admin/auth/login", formData)
             if (response.status === 200) {
-                dispatch(setCredentials({ user: response.data.user, token: response.data.token }))
-                addToast('User logged in successfully!', { appearance: 'success', autoDismiss: true })
-                navigate('/')
+                dispatch(setCredentials({ admin: response.data.admin, token: response.data.token }))
+                addToast('Admin login successful !', { appearance: 'success', autoDismiss: true })
+                navigate('/admin/dashboard')
             }
         } catch (error) {
             if (error?.response?.status === 400) {
                 const errorData = error.response.data.errors;
                 let errorMsg = errorData.map(e => e?.msg || e)
-                setLoader(false)
                 errorMsg.forEach(e => addToast(e, { appearance: "error", autoDismiss: true }))
             } else if (error?.response?.status === 401) {
                 addToast("Invalid username or password", { appearance: "error", autoDismiss: true })
             } else {
                 console.error(error?.response?.data?.error)
-                setLoader(false)
-                addToast('An error occurred while registering. Please try again later.', { appearance: 'error', autoDismiss: true });
+                addToast('Something went wrong', { appearance: 'error', autoDismiss: true });
             }
-        } finally {
+        } finally {  
             setLoader(false)
         }
     }
@@ -70,19 +67,17 @@ function UserLogin() {
                         <div className="col-lg-6 mb-5 mb-lg-0">
                             <div className="card cascading-right" style={{ background: 'hsla(0, 0%, 100%, 0.55)', backdropFilter: 'blur(4px)', width: '500px' }}>
                                 <div className="card-body p-5 shadow-5 text-center">
-                                    <h2 className="fw-bold mb-5">Log in now</h2>
-                                    <form onSubmit={loginUser}>
-
+                                    <h2 className="fw-bold mb-5">LogIn | Admin Panel</h2>
+                                    <form onSubmit={loginAdmin}>
                                         <div className="form-outline mb-4">
-                                            <input type="email"
+                                            <input type="text"
                                                 id="form3Example3"
                                                 className="form-control"
-                                                value={formData.email}
-                                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                                placeholder='Enter your email address'
+                                                value={formData.username}
+                                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                                                placeholder='Enter admin username'
                                             />
                                         </div>
-
                                         <div className="form-outline mb-4">
                                             <input
                                                 type="password"
@@ -97,22 +92,6 @@ function UserLogin() {
                                         <button type="submit" className="bg-blue-500 rounded hover:bg-blue-700 text-white font-bold py-2 px-4 block w-full mb-4">
                                             Login
                                         </button>
-                                        <Link to={"/user/forgot-password"}>
-                                            <button className='text-blue-800 hover:text-blue-900 ml-1'>
-                                                Forgot password?
-                                            </button>
-                                        </Link>
-                                        <div className="text-center mt-3">
-                                            <button><GoogleLogin setLoader={setLoader} /></button>
-                                        </div>
-                                        <div className="flex justify-center mt-5">
-                                            <p>Don't have an account?</p>
-                                            <Link to={'/user/signup'}>
-                                                <button className='text-blue-500 hover:text-blue-700 ml-1'>
-                                                    SignUp
-                                                </button>
-                                            </Link>
-                                        </div>
                                     </form>
                                 </div>
                             </div>
