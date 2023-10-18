@@ -1,13 +1,13 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { BeatLoader } from "react-spinners";
+import { adminInstance } from "../../APIs/api";
 
 const TableOne = () => {
     const [users, setUsers] = useState([])
     const [loader, setLoader] = useState(false)
 
     useEffect(() => {
-        axios.get('http://localhost:7000/api/admin/users-list')
+        adminInstance.get('/users-list')
             .then((res) => {
                 setUsers(res.data.users)
             })
@@ -20,7 +20,7 @@ const TableOne = () => {
         e.preventDefault()
         try {
             setLoader(true)
-            const response = await axios.put("http://localhost:7000/api/admin/user-control", { userId })
+            const response = await adminInstance.put("/user-control", { userId })
             setUsers(prev => {
                 return prev.map(user => {
                     if (user._id === response.data._id) {

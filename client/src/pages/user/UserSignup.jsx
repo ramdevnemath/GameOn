@@ -11,7 +11,7 @@ function UserSignUp() {
     const { addToast } = useToasts()
 
     const sectionStyle = {
-        backgroundImage: `url("https://downloader.la/temp/[Downloader.la]-651e6a21ea75d.jpg")`,
+        backgroundImage: `url(${require('../../images/signupBackground.jpg')})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '100vh',

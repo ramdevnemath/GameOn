@@ -1,7 +1,7 @@
 import React from 'react'
+import axios from 'axios'
 import { useState } from 'react'
 import { BeatLoader } from 'react-spinners'
-import axios from 'axios'
 import { useToasts } from 'react-toast-notifications'
 import { useNavigate } from 'react-router-dom'
 
@@ -28,7 +28,7 @@ function ForgotPassword() {
         setLoader(true);
         setIsButtonDisabled(true);
         try {
-            const response = await axios.post('http://localhost:7000/api/users/password-reset', { email });
+            const response = await axios.post('http://localhost:7000/api/vendors/password-reset', { email });
             if (response.status === 200) {
                 addToast('Verification link has been sent to your email successfully!', { appearance: 'success', autoDismiss: true });
             } else {

@@ -1,6 +1,7 @@
     import express from 'express'
     import { body } from "express-validator"
     import * as userController from "../controllers/userControllers.js"
+    import { verifyToken } from '../utils/jwt.js'
 
     const userRouter = express.Router()
 
@@ -11,7 +12,7 @@
             body('email').trim().isEmail().withMessage('Invalid email address'),
             body('phone').trim().isMobilePhone().withMessage('Invalid phone number'),
             body('password').trim().isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
-        ], 
+        ],
         userController.register
     )
     userRouter.get('/', userController.homePage)

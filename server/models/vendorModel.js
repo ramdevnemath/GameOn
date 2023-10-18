@@ -3,11 +3,11 @@ import bcrypt from "bcrypt"
 // import crypto from "crypto"
 
 const vendorSchema = new mongoose.Schema({
-  fname: {
+  fullName: {
     type: String,
     required: true,
   },
-  lname: {
+  turfName: {
     type: String,
     required: true,
   },
@@ -33,7 +33,7 @@ const vendorSchema = new mongoose.Schema({
   },
   isActive: {
     type: Boolean,
-    default: true
+    default: false
   },
   createdAt: {
     type: Date,
@@ -50,15 +50,15 @@ vendorSchema.pre("save", async function(next){
     this.password = await bcrypt.hash(this.password, salt)
   })
 
-//   vendorSchema.methods.matchPassword = async function (enteredPassword) {
-//     if (!this.password) return false
-//     return await bcrypt.compare(enteredPassword, this.password)
-//   }
+  vendorSchema.methods.matchPassword = async function (enteredPassword) {
+    if (!this.password) return false
+    return await bcrypt.compare(enteredPassword, this.password)
+  }
 
-//   vendorSchema.methods.generatePasswordResetToken = function() {
-//     this.resetPasswordToken = crypto.randomBytes(20).toString('hex')
-//     this.resetPasswordExpires = Date.now() + 3600000
-// };
+  vendorSchema.methods.generatePasswordResetToken = function() {
+    this.resetPasswordToken = crypto.randomBytes(20).toString('hex')
+    this.resetPasswordExpires = Date.now() + 3600000
+};
 
 
 const Vendor = mongoose.model('Vendor', vendorSchema);

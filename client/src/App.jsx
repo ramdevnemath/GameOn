@@ -10,6 +10,14 @@ import AdminLogin from "./pages/admin/adminLogin"
 import Dashboard from "./pages/admin/Dashboard";
 import UserProfile from "./pages/user/UserProfile";
 import UsersList from "./pages/admin/UsersList";
+import Vendors from "./pages/admin/Vendors";
+import VendorDetails from "./pages/admin/VendorDetails";
+import VendorLogin from "./pages/vendor/VendorLogin";
+import VendorForgotPassword from "./pages/vendor/ForgotPassword"
+import VendorDashboard from "./pages/vendor/Dashboard";
+import VerifyAdmin from "./components/admin/VerifyAdmin";
+import AddTurfDetails from "./pages/vendor/AddTurfDetails";
+import VerifyVendor from "./components/vendor/VerifyVendor";
 import "./App.css"
 
 function App() {
@@ -20,15 +28,31 @@ function App() {
     <GoogleOAuthProvider clientId={client_id}>
       <Router>
         <Routes>
+
           <Route path="/" Component={UserHome} />
+          <Route path="/user/profile" Component={UserProfile} />
           <Route path="/user/login" Component={UserLogin} />
           <Route path="/user/signup" Component={UserSignUp} />
           <Route path="/user/forgot-password" Component={ForgotPassword} />
-          <Route path="/user/password-reset/:id/:token" Component={ResetPassword} />
+
+          <Route path="/password-reset/:id/:token" Component={ResetPassword} />
+
+          <Route path="/admin" Component={VerifyAdmin}>
+            <Route index path="/admin/dashboard" Component={Dashboard} />
+            <Route path="/admin/users-list" Component={UsersList} />
+            <Route path="/admin/vendors-list" Component={Vendors} />
+            <Route path="/admin/vendor-details/:id" Component={VendorDetails} />
+          </Route>
+          
           <Route path="/admin/login" Component={AdminLogin} />
-          <Route path="/user/profile" Component={UserProfile} />
-          <Route path="/admin/dashboard" Component={Dashboard} />
-          <Route path="/admin/users-list" Component={UsersList} />
+
+          <Route path="/vendor" Component={VerifyVendor}>
+            <Route index path="/vendor/dashboard" Component={VendorDashboard} />
+            <Route path="/vendor/turf-details" Component={AddTurfDetails} />
+          </Route>
+
+            <Route path="/vendor/forgot-password" Component={VendorForgotPassword} />
+            <Route path="/vendor/login" Component={VendorLogin} />
         </Routes>
       </Router>
     </GoogleOAuthProvider>

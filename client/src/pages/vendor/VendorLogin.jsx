@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
-import { setCredentials } from '../../redux/slices/adminSlice';
-import { BeatLoader } from 'react-spinners';
-import { useToasts } from 'react-toast-notifications';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { adminInstance } from '../../APIs/api';
+import axios from 'axios'
+import React, { useState } from 'react'
+import { useToasts } from 'react-toast-notifications'
+import { useNavigate, Link } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { BeatLoader } from 'react-spinners'
+import { setCredentials } from '../../redux/slices/vendorSlice'
 
-function UserLogin() {
-
+function VendorLogin() {
     const { addToast } = useToasts()
     const navigate = useNavigate()
 
     const sectionStyle = {
-        backgroundImage: `url(${require("../../images/banner2.jpg")})`,
+        backgroundImage: `url(${require('../../images/Background.jpg')})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '100vh',
@@ -23,20 +22,20 @@ function UserLogin() {
 
     const [loader, setLoader] = useState(false)
     const [formData, setFormData] = useState({
-        username: "",
+        email: "",
         password: ""
     })
     const dispatch = useDispatch()
 
-    const loginAdmin = async (e) => {
+    const loginVendor = async (e) => {
         e.preventDefault()
         try {
             setLoader(true)
-            const response = await adminInstance.post('/auth/post-login', formData)
+            const response = await axios.post("http://localhost:7000/api/vendors/auth/login", formData)
             if (response.status === 200) {
-                dispatch(setCredentials({ admin: response.data.admin, token: response.data.token }))
-                addToast('Admin login successful !', { appearance: 'success', autoDismiss: true })
-                navigate('/admin/dashboard')
+                dispatch(setCredentials({ vendor: response.data.vendor, token: response.data.token }))
+                addToast('Vendor logged in successfully!', { appearance: 'success', autoDismiss: true })
+                navigate('/vendor/dashboard')
             }
         } catch (error) {
             if (error?.response?.status === 400) {
@@ -44,12 +43,14 @@ function UserLogin() {
                 let errorMsg = errorData.map(e => e?.msg || e)
                 errorMsg.forEach(e => addToast(e, { appearance: "error", autoDismiss: true }))
             } else if (error?.response?.status === 401) {
-                addToast("Invalid username or password", { appearance: "error", autoDismiss: true })
+                addToast("Invalid email or password", { appearance: "error", autoDismiss: true })
+            } else if (error?.response?.status === 402) {
+                addToast("Sorry. Your account is blocked.", { appearance: "error", autoDismiss: true })
             } else {
                 console.error(error?.response?.data?.error)
-                addToast('Something went wrong', { appearance: 'error', autoDismiss: true });
+                addToast('An error occurred while registering. Please try again later.', { appearance: 'error', autoDismiss: true });
             }
-        } finally {  
+        } finally {
             setLoader(false)
         }
     }
@@ -67,17 +68,19 @@ function UserLogin() {
                         <div className="col-lg-6 mb-5 mb-lg-0">
                             <div className="card cascading-right" style={{ background: 'hsla(0, 0%, 100%, 0.55)', backdropFilter: 'blur(4px)', width: '500px' }}>
                                 <div className="card-body p-5 shadow-5 text-center">
-                                    <h2 className="fw-bold mb-5">LogIn | Admin Panel</h2>
-                                    <form onSubmit={loginAdmin}>
+                                    <h2 className="fw-bold mb-5">Log in now</h2>
+                                    <form onSubmit={loginVendor}>
+
                                         <div className="form-outline mb-4">
-                                            <input type="text"
+                                            <input type="email"
                                                 id="form3Example3"
                                                 className="form-control"
-                                                value={formData.username}
-                                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                                placeholder='Enter admin username'
+                                                value={formData.email}
+                                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                placeholder='Enter your email address'
                                             />
                                         </div>
+
                                         <div className="form-outline mb-4">
                                             <input
                                                 type="password"
@@ -92,6 +95,11 @@ function UserLogin() {
                                         <button type="submit" className="bg-blue-500 rounded hover:bg-blue-700 text-white font-bold py-2 px-4 block w-full mb-4">
                                             Login
                                         </button>
+                                        <Link to={"/vendor/forgot-password"}>
+                                            <button className='text-blue-800 hover:text-blue-900 ml-1'>
+                                                Forgot password?
+                                            </button>
+                                        </Link>
                                     </form>
                                 </div>
                             </div>
@@ -103,4 +111,4 @@ function UserLogin() {
     )
 }
 
-export default UserLogin
+export default VendorLogin

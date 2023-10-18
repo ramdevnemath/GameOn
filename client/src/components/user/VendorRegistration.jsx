@@ -6,8 +6,8 @@ import axios from 'axios';
 function VendorRegistration({onClose}) {
 
     const [formData, setFormData] = useState({
-        fname: "",
-        lname: "",
+        fullName: "",
+        turfName: "",
         email: "",
         phone: "",
         password: "",
@@ -41,8 +41,8 @@ function VendorRegistration({onClose}) {
         e.preventDefault();
 
         const formDataToSend = new FormData();
-        formDataToSend.append('fname', formData.fname);
-        formDataToSend.append('lname', formData.lname);
+        formDataToSend.append('fullName', formData.fullName);
+        formDataToSend.append('turfName', formData.turfName);
         formDataToSend.append('email', formData.email);
         formDataToSend.append('phone', formData.phone);
         formDataToSend.append('password', formData.password);
@@ -74,7 +74,7 @@ function VendorRegistration({onClose}) {
     return (
 
         <>
-            <h3 className="pt-4 text-2xl text-center">Create an Account!</h3>
+            
             {loader && (
                 <div className="absolute top-0 right-0 bottom-0 left-0 flex items-center justify-center bg-black/90 z-40">
                     <BeatLoader color="#36d7b7" />
@@ -84,27 +84,27 @@ function VendorRegistration({onClose}) {
                 <div className="mb-4 flex flex-wrap">
                     <div className="w-full md:w-1/2 md:pr-2 mb-4 md:mb-0">
                         <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="firstName">
-                            First Name
+                            Full Name
                         </label>
                         <input
                             className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                            id="firstName"
+                            id="fullName"
                             type="text"
-                            placeholder="First Name"
-                            name='fname'
+                            placeholder="Full Name"
+                            name='fullName'
                             onChange={handleInputChange}
                         />
                     </div>
                     <div className="w-full md:w-1/2 md:pl-2">
                         <label className="block mb-2 text-sm font-bold text-gray-700" htmlFor="lastName">
-                            Last Name
+                            Turf Name
                         </label>
                         <input
                             className="w-full px-3 py-2 text-sm leading-tight text-gray-700 border rounded shadow appearance-none focus:outline-none focus:shadow-outline"
-                            id="lastName"
+                            id="turfName"
                             type="text"
-                            placeholder="Last Name"
-                            name='lname'
+                            placeholder="Turf Name"
+                            name='turfName'
                             onChange={handleInputChange}
                         />
                     </div>

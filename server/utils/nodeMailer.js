@@ -2,6 +2,8 @@ import nodemailer from "nodemailer"
 
 const mailTransporter = (resetPasswordToken, user) => {
 
+    console.log("resetPasswordToken: ",resetPasswordToken, "user: ",user)
+
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {

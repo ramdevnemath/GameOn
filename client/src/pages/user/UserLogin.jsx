@@ -13,7 +13,7 @@ function UserLogin() {
     const navigate = useNavigate()
 
     const sectionStyle = {
-        backgroundImage: `url('../../images/Background.jpg)`,
+        backgroundImage: `url(${require('../../images/Background.jpg')})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '100vh',
@@ -43,13 +43,11 @@ function UserLogin() {
             if (error?.response?.status === 400) {
                 const errorData = error.response.data.errors;
                 let errorMsg = errorData.map(e => e?.msg || e)
-                setLoader(false)
                 errorMsg.forEach(e => addToast(e, { appearance: "error", autoDismiss: true }))
             } else if (error?.response?.status === 401) {
-                addToast("Invalid username or password", { appearance: "error", autoDismiss: true })
+                addToast("Invalid email or password", { appearance: "error", autoDismiss: true })
             } else {
                 console.error(error?.response?.data?.error)
-                setLoader(false)
                 addToast('An error occurred while registering. Please try again later.', { appearance: 'error', autoDismiss: true });
             }
         } finally {

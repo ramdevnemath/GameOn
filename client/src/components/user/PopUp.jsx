@@ -6,7 +6,7 @@ function Popup(props) {
 
     return (
         props.show && (
-            <div className='popup-overlay' style={{zIndex:"2"}}>
+            <div className='popup-overlay' style={{zIndex:"3"}}>
                 <div className="popup-container">
                     <div className="popup-content">
                         <span className="close" onClick={props.onClose}>

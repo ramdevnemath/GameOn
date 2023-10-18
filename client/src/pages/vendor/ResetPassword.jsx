@@ -1,6 +1,6 @@
+import axios from 'axios'
 import React, { useState } from 'react'
 import { BeatLoader } from 'react-spinners'
-import axios from 'axios'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useToasts } from 'react-toast-notifications'
 
@@ -27,17 +27,16 @@ function ResetPassword() {
         e.preventDefault()
         try {
             setLoader(true)
-            const response = await axios.post(`http://localhost:7000/api/users/post-password-reset`, { password, id, token })
+            const response = await axios.post(`http://localhost:7000/api/vendors/post-password-reset`, { password, id, token })
             if (response.status === 200) {
                 addToast('Password changed successfully!', { appearance: 'success', autoDismiss: true })
-                navigate('/user/login')
+                navigate('/vendor/login')
             }
             if (response.status === 401) {
                 addToast('Token has expired!', { appearance: 'error', autoDismiss: true })
-                navigate('/user/forgot-password')
+                navigate('/vendor/forgot-password')
             }
         } catch (error) {
-            // console.error(error?.response?.data?.error)
             addToast('An error occurred while registering. Please try again later.', { appearance: 'error', autoDismiss: true });
         } finally {
             setLoader(false)

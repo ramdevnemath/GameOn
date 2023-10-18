@@ -2,6 +2,7 @@ import { validationResult } from "express-validator"
 import userSchema from "../models/userModel.js"
 import { generateToken } from "../utils/jwt.js"
 import mailTransporter from "../utils/nodeMailer.js"
+import bcrypt from "bcrypt"
 
 export const register = async (req, res) => {
     const errors = validationResult(req)
@@ -136,14 +137,19 @@ export const resetPassword = async (req, res) => {
 
 export const changePassword = async (req, res) => {
     const { password, id, token } = req.body
+    console.log(password)
     try {
         if (!token) {
             console.log("Token missing")
             return res.status(401).json({ status: "error", message: "Token has expired" })
         }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         const user = await userSchema.findByIdAndUpdate(
             id,
-            { password: password },
+            { password: hashedPassword },
             {
                 new: true,
                 runValidators: true

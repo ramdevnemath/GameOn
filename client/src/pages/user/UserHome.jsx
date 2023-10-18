@@ -5,7 +5,7 @@ import Contents from '../../components/user/contents';
 import Footer from '../../components/user/Footer';
 import Popup from '../../components/user/PopUp';
 
-function UserHome(props) {
+function UserHome() {
 
   const [showPopup, setShowPopup] = useState(false)
 

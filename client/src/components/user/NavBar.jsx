@@ -43,7 +43,7 @@ function NavBar(props) {
 
   return (
     <>
-      <nav className={`bg-black p-4 ${isSticky ? 'fixed top-0 w-full' : ''}`} style={{ zIndex:'1'}}>
+      <nav className={`bg-black p-4 ${isSticky ? 'fixed top-0 w-full' : ''}`} style={{ zIndex:'2'}}>
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-white text-2xl font-semibold">
             <img src={Logo} style={{width:"150px", height:"auto"}} alt='logo'></img>
@@ -60,7 +60,7 @@ function NavBar(props) {
             ( <button onClick={handleLogin} className="text-white hover:text-gray-300 mr-40">LogIn</button> )
           }
             {isDropdownVisible && (
-              <div className="absolute mt-2 py-2 w-40 bg-white shadow-xl">
+              <div className="absolute mt-2 py-2 w-40 bg-white shadow-xl" style={{zIndex: "2"}}>
                 <Link to={`/user/profile`} className="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">Profile</Link>
                 <Link onClick={handleLogout} className="block px-4 py-2 text-gray-800 hover:bg-indigo-500 hover:text-white">Sign Out</Link>
               </div>

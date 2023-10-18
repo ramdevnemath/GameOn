@@ -24,7 +24,7 @@ function NavBar() {
           <div className="hidden md:flex space-x-4 flex-grow items-center justify-center">
             <Link to={"/admin/dashboard"} className="text-white hover:text-gray-300">Dashboard</Link>
             <Link to={"/admin/users-list"} className="text-white hover:text-gray-300">Users</Link>
-            <Link to={""} className="text-white hover:text-gray-300">Vendors</Link>
+            <Link to={"/admin/vendors-list"} className="text-white hover:text-gray-300">Vendors</Link>
             <Link to={""} className="text-white hover:text-gray-300">Bookings</Link>
           </div>
           <div className="relative group"><button onClick={handleLogout} className="text-white hover:text-gray-300 mr-40">LogOut</button>
