@@ -41,5 +41,9 @@ vendorRouter.post('/auth/login',
 vendorRouter.get('/vendor/dashboard', vendorController.homePage)
 vendorRouter.post('/password-reset', vendorController.VendorPasswordReset)
 vendorRouter.post('/post-password-reset', vendorController.VendorChangePassword)
+vendorRouter.post('/post-turf-details', vendorController.addTurf)
+vendorRouter.post('/update-turf-details', vendorController.updateTurfDetails)
+vendorRouter.get('/get-vendor/:id', vendorController.getVendor)
+vendorRouter.get('/turf-details/:id', vendorController.getTurf)
 
 export default vendorRouter

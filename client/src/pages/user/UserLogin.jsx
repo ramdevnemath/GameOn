@@ -37,7 +37,7 @@ function UserLogin() {
             if (response.status === 200) {
                 dispatch(setCredentials({ user: response.data.user, token: response.data.token }))
                 addToast('User logged in successfully!', { appearance: 'success', autoDismiss: true })
-                navigate('/')
+                navigate('/home')
             }
         } catch (error) {
             if (error?.response?.status === 400) {

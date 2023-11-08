@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { dropCredentials } from "../../redux/slices/userSlice"
 import Logo from "../../images/Logo.png"
+import "../vendor/navbar.css"
 
 function NavBar(props) {
   
@@ -11,7 +12,6 @@ function NavBar(props) {
   const navigate = useNavigate()
   
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const [isSticky, setSticky] = useState(false)
   
   const handleToggleDropdown = () => {
     setIsDropdownVisible(!isDropdownVisible);
@@ -26,24 +26,9 @@ function NavBar(props) {
     navigate('/user/login');
   };
 
-  const handleScroll = () => {
-    if (window.scrollY > 0) {
-      setSticky(true);
-    } else {
-      setSticky(false);
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
   return (
     <>
-      <nav className={`bg-black p-4 ${isSticky ? 'fixed top-0 w-full' : ''}`} style={{ zIndex:'2'}}>
+      <nav className='bg-black p-4 navbar'>
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-white text-2xl font-semibold">
             <img src={Logo} style={{width:"150px", height:"auto"}} alt='logo'></img>

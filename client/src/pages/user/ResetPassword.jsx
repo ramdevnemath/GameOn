@@ -37,7 +37,6 @@ function ResetPassword() {
                 navigate('/user/forgot-password')
             }
         } catch (error) {
-            // console.error(error?.response?.data?.error)
             addToast('An error occurred while registering. Please try again later.', { appearance: 'error', autoDismiss: true });
         } finally {
             setLoader(false)

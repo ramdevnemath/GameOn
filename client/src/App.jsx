@@ -18,6 +18,10 @@ import VendorDashboard from "./pages/vendor/Dashboard";
 import VerifyAdmin from "./components/admin/VerifyAdmin";
 import AddTurfDetails from "./pages/vendor/AddTurfDetails";
 import VerifyVendor from "./components/vendor/VerifyVendor";
+import Venues from "./pages/user/venues";
+import VendorProfile from "./pages/vendor/VendorProfile";
+import ViewTurf from "./pages/user/ViewTurf";
+import VerifyUser from "./components/user/VerifyUser";
 import "./App.css"
 
 function App() {
@@ -30,10 +34,16 @@ function App() {
         <Routes>
 
           <Route path="/" Component={UserHome} />
+          <Route path="/home" Component={UserHome} />
           <Route path="/user/profile" Component={UserProfile} />
           <Route path="/user/login" Component={UserLogin} />
           <Route path="/user/signup" Component={UserSignUp} />
           <Route path="/user/forgot-password" Component={ForgotPassword} />
+          <Route path="/venues" Component={Venues} />
+
+          <Route path="/venues" Component={VerifyUser}>
+            <Route path="/venues/view-turf" Component={ViewTurf} />
+          </Route>
 
           <Route path="/password-reset/:id/:token" Component={ResetPassword} />
 
@@ -49,6 +59,7 @@ function App() {
           <Route path="/vendor" Component={VerifyVendor}>
             <Route index path="/vendor/dashboard" Component={VendorDashboard} />
             <Route path="/vendor/turf-details" Component={AddTurfDetails} />
+            <Route path="/vendor/profile" Component={VendorProfile} />
           </Route>
 
             <Route path="/vendor/forgot-password" Component={VendorForgotPassword} />

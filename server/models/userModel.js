@@ -49,7 +49,7 @@ userSchema.pre("save", async function(next) {
   } catch (error) {
       return next(error);
   }
-});
+}); 
 
   userSchema.methods.matchPassword = async function (enteredPassword) {
     if (!this.password) return false

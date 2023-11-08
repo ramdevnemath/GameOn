@@ -23,7 +23,7 @@ function Carousel() {
         <Slider {...settings}>
             {images.map((image, index) => (
                 <div key={index}>
-                    <div className='flex justify-center items-center mt-2'>
+                    <div className='flex justify-center items-center mt-[100px]'>
                         <img
                             src={image}
                             alt={`banner-${index}`}

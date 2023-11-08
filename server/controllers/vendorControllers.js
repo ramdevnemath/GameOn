@@ -1,6 +1,7 @@
 import multer from "multer";
 import { validationResult } from "express-validator"
 import Vendor from "../models/vendorModel.js";
+import Turf from "../models/turfModel.js";
 import mailTransporter from "../utils/nodeMailer.js"
 import { generateToken } from "../utils/jwt.js"
 
@@ -22,7 +23,7 @@ export const register = async (req, res) => {
         let emailExists = await Vendor.exists({ email: req.body.email })
         if (emailExists) {
             return res.status(400).json({ status: "error", errors: ["Email already exists"] })
-        }   
+        }
         let phoneExists = await Vendor.exists({ phone: req.body.phone })
         if (phoneExists) {
             return res.status(400).json({ status: "error", errors: ["Phone number already exists"] })
@@ -104,7 +105,7 @@ export const vendorLogin = async (req, res) => {
         if (!vendor || !(await vendor.matchPassword(req.body.password))) {
             console.log("Vendor not find. || Password is not matching")
             return res.status(401).json({ status: 'error', message: 'Invalid email or password.' });
-        } 
+        }
         if (!vendor.isActive) {
             console.log("Vendor is blocked")
             return res.status(402).json({ status: "blocked", message: "User is blocked" })
@@ -124,4 +125,84 @@ export const vendorLogin = async (req, res) => {
 
 export const homePage = async (req, res) => {
     res.send("home page rendered succesfully")
+}
+
+export const addTurf = async (req, res) => {
+
+    const { vendor, turfName, description, location, tags, imageUrls, city } = req.body;
+    const vendorId = vendor.vendor._id
+
+    try {
+
+        const turf = new Turf({
+            vendorId,
+            turfName,
+            description,
+            location,
+            tags,
+            city,
+            imageUrls
+        });
+
+        await turf.save()
+        res.status(200).json({ message: "Turf details added", turf })
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ status: "error", error: "Internal Server Error" })
+    }
+}
+
+export const updateTurfDetails = async (req, res) => {
+    const { vendor, turfName, description, location, tags, imageUrls, city } = req.body;
+    const vendorId = vendor.vendor._id
+    try {
+        const updatedTurf = await Turf.findOneAndUpdate(
+            { vendorId: vendorId, turfName: turfName },
+            { turfName, description, location, tags, city, imageUrls },
+            { new: true }
+        );
+
+        if (!updatedTurf) {
+            return res.status(404).json({ status: "error", error: "Turf details not found" });
+        }
+        res.status(200).json({ message: "Turf details updated", updatedTurf })
+
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ status: "error", error: "Internal Server Error" })
+    }
+}
+
+export const getVendor = async (req, res) => {
+    try {
+        const vendorId = req.params.id
+        const vendor = await Vendor.findById(vendorId)
+        if (!vendor) {
+            throw new Error('Vendor ID is not matching in db')
+        }
+        const base64IdProof = vendor.idProof.toString('base64');
+        const base64GroundProof = vendor.groundProof.toString('base64');
+        const modifiedVendor = {
+            ...vendor._doc,
+            idProof: base64IdProof,
+            groundProof: base64GroundProof
+        }
+        await vendor.save()
+        return res.status(200).json(modifiedVendor)
+    } catch (error) {
+        console.error("Internal server error", error)
+        return res.status(400).json(error)
+    }
+}
+
+export const getTurf = async (req, res) => {
+    const vendorId = req.params.id
+    try {
+        const turf = await Turf.findOne({ vendorId: vendorId })
+        return res.status(200).json(turf)
+    } catch (error) {
+        console.error("Internal server error", error)
+        return res.status(400).json(error)
+    }
 }

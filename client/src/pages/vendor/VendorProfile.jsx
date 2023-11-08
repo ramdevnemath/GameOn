@@ -1,38 +1,32 @@
 import React, { useEffect, useRef, useState } from 'react'
-import axios from 'axios';
-import { BeatLoader } from 'react-spinners';
-import NavBar from '../../components/user/NavBar';
+import NavBar from '../../components/vendor/Navbar'
 import { useSelector } from 'react-redux';
-import { useToasts } from 'react-toast-notifications';
-import noImg from "../../images/noimage.jpg"
-import { deleteObject, getDownloadURL, listAll, ref, uploadBytes } from 'firebase/storage';
-import { storage } from '../../firebase/firebase';
 import Footer from '../../components/user/Footer';
-import Popup from '../../components/user/PopUp';
+import { vendorInstance } from '../../APIs/api';
+import { useToasts } from 'react-toast-notifications';
+import { ref, uploadBytes, listAll, getDownloadURL, deleteObject } from 'firebase/storage'
+import { storage } from '../../firebase/firebase';
+import noImg from "../../images/noimage.jpg"
 
-function UserProfile() {
+function VendorProfile() {
 
-    const user = useSelector(state => state.user)
-
+    const vendor = useSelector(state => state.vendor)
+    const vendorId = vendor.vendor._id
     const fileInputRef = useRef(null);
     const { addToast } = useToasts()
 
+    const [turf, setTurf] = useState()
     const [imgUrl, setImgUrl] = useState(noImg)
-    const [showPopup, setShowPopup] = useState(false)
-
-    const togglePopup = () => {
-        setShowPopup(!showPopup)
-    }
 
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
-
+    
         if (file) {
-            const storageRef = ref(storage, `${user.user.fname}/profilePic/`);
+            const storageRef = ref(storage, `${vendor.vendor.fullName}/profilePic/`);
             try {
                 const response = await listAll(storageRef)
                 await Promise.all(response.items.map(item => deleteObject(item)));
-                const imageRef = ref(storage, `${user.user.fname}/profilePic/${file.name}`);
+                const imageRef = ref(storage, `${vendor.vendor.fullName}/profilePic/${file.name}`);
                 await uploadBytes(imageRef, file);
                 const imageUrl = await getDownloadURL(imageRef);
                 setImgUrl(imageUrl);
@@ -42,12 +36,12 @@ function UserProfile() {
             }
         }
     };
-
+    
 
     useEffect(() => {
         const fetchImageURLs = async () => {
             try {
-                const imageRef = ref(storage, `${user.user.fname}/profilePic/`);
+                const imageRef = ref(storage, `${vendor.vendor.fullName}/profilePic/`);
                 const response = await listAll(imageRef);
 
                 if (response.items.length > 0) {
@@ -69,10 +63,23 @@ function UserProfile() {
         fileInputRef.current.click();
     };
 
+    useEffect(() => {
+
+        const fetchTurf = async () => {
+            try {
+                const response = await vendorInstance.get(`/turf-details/${vendorId}`);
+                setTurf(response.data);
+            } catch (error) {
+                console.error('Error fetching turf details:', error);
+            }
+        };
+
+        fetchTurf();
+    }, [vendorId])
+
     return (
         <>
-            <NavBar togglePopup={togglePopup}/>
-            <Popup show={showPopup} onClose={togglePopup} />
+            <NavBar />
             <main className="profile-page bg-slate-500">
                 <section className="relative block h-[500px]">
                     <div className="relative top-0 w-full h-full bg-center bg-cover" style={{ backgroundImage: `url('https://images.unsplash.com/photo-1499336315816-097655dcfbda?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=2710&amp;q=80')` }}>
@@ -109,7 +116,7 @@ function UserProfile() {
                                     <div className="w-full lg:w-4/12 px-4 lg:order-3 lg:text-right lg:self-center">
                                         <div className="py-6 px-3 mt-32 sm:mt-0">
                                             <button className="bg-pink-500 active:bg-pink-600 uppercase text-white font-bold hover:shadow-md shadow text-xs px-4 py-2 rounded outline-none focus:outline-none sm:mr-2 mb-1 ease-linear transition-all duration-150" type="button">
-                                                Edit
+                                                Connect
                                             </button>
                                         </div>
                                     </div>
@@ -129,28 +136,28 @@ function UserProfile() {
                                 </div>
                                 <div className="text-center mt-12">
                                     <h3 className="text-4xl font-semibold leading-normal text-blueGray-700 mb-2">
-                                        {user.user.fname} {user.user.lname}
+                                        {vendor.vendor.fullName}
                                     </h3>
                                     <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold">
                                         <i className="fas fa-envelope mr-2 text-lg text-blueGray-400"></i>
-                                        {user.user.email}
+                                        {vendor.vendor.email}
                                     </div>
                                     <div className="text-sm leading-normal mt-0 mb-2 text-blueGray-400 font-bold">
                                         <i className="fas fa-phone-alt mr-2 text-lg text-blueGray-400"></i>
-                                        {user.user.phone}
+                                        {vendor.vendor.phone}
                                     </div>
-                                    {/* <div className="mb-2 text-blueGray-600 mt-10">
-                                        <i className="fas fa-th mr-2 text-lg text-blueGray-400"></i>
+                                    <div className="mb-2 text-blueGray-600 mt-10">
+                                        <i className="fas fa-th mr-2 text-lg text-blueGray-400"></i>Venue Name - {vendor.vendor.turfName}
                                     </div>
                                     <div className="mb-2 text-blueGray-600">
-                                        <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>
-                                    </div> */}
+                                        <i className="fas fa-map-marker-alt mr-2 text-lg text-blueGray-400"></i>{turf && turf.location}
+                                    </div>
                                 </div>
                                 <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
                                     <div className="flex flex-wrap justify-center">
                                         <div className="w-full lg:w-9/12 px-4">
                                             <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
-                                                
+                                                {turf && turf.description}
                                             </p>
                                         </div>
                                     </div>
@@ -165,4 +172,4 @@ function UserProfile() {
     )
 }
 
-export default UserProfile
+export default VendorProfile

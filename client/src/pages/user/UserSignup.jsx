@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { BeatLoader } from "react-spinners"
 import { useNavigate } from 'react-router-dom';
 import { useToasts } from "react-toast-notifications";
-import axios from 'axios';
+import { userInstance } from '../../APIs/api';
+import OtpVerification from '../../components/user/OtpVerification';
 
 function UserSignUp() {
 
@@ -20,6 +21,8 @@ function UserSignUp() {
         alignItems: 'center',
     };
 
+    const [generatedOTP, setGeneratedOTP] = useState('')
+
     const [formData, setFormData] = useState({
         fname: '',
         lname: '',
@@ -29,21 +32,43 @@ function UserSignUp() {
     })
 
     const [loader, setLoader] = useState(false)
+    const [showPopup, setShowPopup] = useState(false)
+
+    const handleOtpSubmit = async (otp) => {
+        try {
+            setLoader(true)
+            if (generatedOTP == otp) {
+                const response = await userInstance.post('/verify-otp', { formData, otp })
+                if (response.status === 200) {
+                    addToast("User registered succesfully!!", { appearance: "success", autoDismiss: true })
+                    navigate('/user/login')
+                }
+            } else {
+                addToast("Invalid OTP !", { appearance: "error", autoDismiss: true })
+            }
+        } catch (error) {
+            console.error(error?.response?.data?.error)
+            addToast('OTP verification failed', { appearance: 'error', autoDismiss: true });
+        } finally {
+            setLoader(false)
+        }
+    }
 
     const registerUser = async (e) => {
         e.preventDefault()
         try {
             setLoader(true)
-            const response = await axios.post("http://localhost:7000/api/users/register", formData)
+            const response = await userInstance.post("/register", formData)
             if (response.status === 200) {
-                addToast('User registered successfully!', { appearance: 'success', autoDismiss: true });
-                navigate('/user/login')
+                setGeneratedOTP(response.data.otp)
+                addToast('Please enter OTP sent to your E-mail ID', { appearance: 'warning', autoDismiss: true });
+                setShowPopup(true)
             }
         } catch (error) {
             if (error?.response?.status === 400) {
                 const errorData = error.response.data.errors;
-                let errorMsg = errorData.map(e => e?.msg || e)
-                errorMsg.forEach(e => addToast(e,{ appearance: "error", autoDismiss: true }))
+                let errorMsg = errorData?.map(e => e?.msg || e)
+                errorMsg?.map(e => addToast(e, { appearance: "error", autoDismiss: true }))
             } else {
                 console.error(error?.response?.data?.error)
                 addToast('An error occurred while registering. Please try again later.', { appearance: 'error', autoDismiss: true });
@@ -151,6 +176,7 @@ function UserSignUp() {
                         </div>
                     </div>
                 </div>
+            {showPopup && <OtpVerification onOTPSubmit={handleOtpSubmit} />}
             </section>
         </>
     )

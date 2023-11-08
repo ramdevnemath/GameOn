@@ -33,7 +33,7 @@ function VendorLogin() {
             setLoader(true)
             const response = await axios.post("http://localhost:7000/api/vendors/auth/login", formData)
             if (response.status === 200) {
-                dispatch(setCredentials({ vendor: response.data.vendor, token: response.data.token }))
+                dispatch(setCredentials({ vendor: response.data.modifiedVendor, token: response.data.token }))
                 addToast('Vendor logged in successfully!', { appearance: 'success', autoDismiss: true })
                 navigate('/vendor/dashboard')
             }

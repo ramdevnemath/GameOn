@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { dropCredentials } from "../../redux/slices/adminSlice"
 import Logo from "../../images/Logo.png"
+import "../vendor/navbar.css"
 
 function NavBar() {
 
@@ -16,7 +17,7 @@ function NavBar() {
 
   return (
     <>
-      <nav className="bg-black p-4">
+      <nav className="bg-black navbar p-4">
         <div className="container mx-auto flex justify-between items-center">
           <div className="text-white text-2xl font-semibold">
             <img src={Logo} alt="logo" style={{width:"150px", height:"auto"}} />

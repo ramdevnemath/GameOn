@@ -14,7 +14,7 @@ function UserHome() {
   }
 
   return (
-    <div style={{ backgroundColor: "#e5e5f7", opacity: "0.8", backgroundImage: "radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px)", backgroundSize: "10px 10px" }}>
+    <div style={{ backgroundColor: "#e5e5f7", backgroundImage: "radial-gradient(#444cf7 0.5px, #e5e5f7 0.5px)", backgroundSize: "10px 10px" }}>
       <NavBar togglePopup={togglePopup} />
       <Carousel />
       <Popup show={showPopup} onClose={togglePopup} />
