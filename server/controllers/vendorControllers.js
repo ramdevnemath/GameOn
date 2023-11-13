@@ -46,7 +46,7 @@ export const register = async (req, res) => {
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        return res.status(500).json({ message: 'Internal Server Error' });
     }
 }
 
@@ -66,10 +66,10 @@ export const VendorPasswordReset = async (req, res) => {
         vendor.resetPasswordExpires = Date.now() + 2 * 60 * 60 * 1000
         await vendor.save()
         mailTransporter(token, vendor)
-        res.status(200).json({ status: "success", message: "Reset token generated and sent to the user" });
+        return res.status(200).json({ status: "success", message: "Reset token generated and sent to the user" });
     } catch (error) {
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
@@ -119,12 +119,12 @@ export const vendorLogin = async (req, res) => {
         return res.status(200).json({ status: "ok", modifiedVendor, token })
     } catch (error) {
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
 export const homePage = async (req, res) => {
-    res.send("home page rendered succesfully")
+    return res.send("home page rendered succesfully")
 }
 
 export const addTurf = async (req, res) => {
@@ -133,6 +133,12 @@ export const addTurf = async (req, res) => {
     const vendorId = vendor.vendor._id
 
     try {
+
+        const isExists = Turf.findOne({ vendorId: vendorId })
+
+        if(isExists) {
+            return res.status(400).json(isExists)
+        }
 
         const turf = new Turf({
             vendorId,
@@ -145,11 +151,11 @@ export const addTurf = async (req, res) => {
         });
 
         await turf.save()
-        res.status(200).json({ message: "Turf details added", turf })
+        return res.status(200).json({ message: "Turf details added", turf })
 
     } catch (error) {
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
@@ -166,11 +172,11 @@ export const updateTurfDetails = async (req, res) => {
         if (!updatedTurf) {
             return res.status(404).json({ status: "error", error: "Turf details not found" });
         }
-        res.status(200).json({ message: "Turf details updated", updatedTurf })
+        return res.status(200).json({ message: "Turf details updated", updatedTurf })
 
     } catch (error) {
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
@@ -200,7 +206,9 @@ export const getTurf = async (req, res) => {
     const vendorId = req.params.id
     try {
         const turf = await Turf.findOne({ vendorId: vendorId })
-        return res.status(200).json(turf)
+        if(turf) {
+            return res.status(200).json(turf)
+        }
     } catch (error) {
         console.error("Internal server error", error)
         return res.status(400).json(error)

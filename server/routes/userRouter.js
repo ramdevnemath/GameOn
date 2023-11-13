@@ -29,5 +29,6 @@ userRouter.post('/post-password-reset', userController.changePassword)
 userRouter.get('/turf-details', userController.getTurfs)
 userRouter.get('/venues/:id', userController.getVenue)
 userRouter.post('/venue/review-rating', userController.saveReview)
+userRouter.post('/is-review-exists', userController.isReview)
 
 export default userRouter

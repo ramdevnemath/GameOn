@@ -5,16 +5,16 @@ const StarRating = ({ rating, onRatingChange }) => {
     const totalStars = 5;
 
     const handleStarClick = (index) => {
-        const newRating = (index + 1) / totalStars;
-        onRatingChange(newRating);
-        
+        console.log(index);
+        const newRating = index + 1
+        onRatingChange(newRating)
         console.log(newRating)
     };
 
     return (
         <div className="star-rating">
             {[...Array(totalStars)].map((_, index) => {
-                const isYellow = index < Math.floor(rating * totalStars);
+                const isYellow = index < Math.floor(rating);
                 return (
                     <button
                         key={index}

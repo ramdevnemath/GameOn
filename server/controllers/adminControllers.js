@@ -31,7 +31,7 @@ export const adminLogin = async (req, res) => {
         return res.status(200).json({ status: "ok", admin, token })
     } catch (error) {
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
@@ -50,7 +50,6 @@ export const getUsers = async (req, res) => {
 export const userControl = async (req, res) => {
     try {
         const userId = req.body.userId
-
         const user = await userSchema.findById(userId)
         if (!user) {
             throw new Error('User ID is not matching in db')
@@ -79,7 +78,6 @@ export const getVendors = async (req, res) => {
 export const vendorControl = async (req, res) => {
     try {
         const vendorId = req.body.id
-
         const vendor = await Vendor.findById(vendorId)
         if (!vendor) {
             throw new Error('Vendor ID is not matching in db')

@@ -60,12 +60,12 @@ export const register = async (req, res) => {
         }
     } catch (error) {
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
 export const homePage = (req, res) => {
-    res.send("home page rendered succesfully")
+    return res.send("home page rendered succesfully")
 }
 
 export const verifyToken = (req, res, next) => {
@@ -104,7 +104,7 @@ export const userLogin = async (req, res) => {
         return res.status(200).json({ status: "ok", user, token })
     } catch (error) {
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
@@ -138,7 +138,7 @@ export const googleAuth = async (req, res) => {
         }
     } catch (error) {
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
@@ -158,10 +158,10 @@ export const resetPassword = async (req, res) => {
         user.resetPasswordExpires = Date.now() + 2 * 60 * 60 * 1000
         await user.save()
         mailTransporter(token, user)
-        res.status(200).json({ status: "success", message: "Reset token generated and sent to the user" });
+        return res.status(200).json({ status: "success", message: "Reset token generated and sent to the user" });
     } catch (error) {
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
@@ -190,7 +190,6 @@ export const changePassword = async (req, res) => {
         return res.status(200).json({ status: "ok", user, token })
 
     } catch (error) {
-
         console.error("Error updating password", error.message)
     }
 }
@@ -200,11 +199,11 @@ export const getTurfs = async (req, res) => {
     try {
 
         const turfs = await Turf.find()
-        res.status(200).json(turfs)
+        return res.status(200).json(turfs)
     } catch (error) {
 
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
@@ -215,13 +214,13 @@ export const getVenue = async (req, res) => {
         const turfId = req.params.id
         const turf = await Turf.findOne({ _id: turfId })
         if (turf) {
-            res.status(200).json(turf)
+            return res.status(200).json(turf)
         }
 
     } catch (error) {
 
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" })
+        return res.status(500).json({ status: "error", error: "Internal Server Error" })
     }
 }
 
@@ -240,7 +239,7 @@ export const saveReview = async (req, res) => {
                 { userId: userId, turfId: turfId },
                 { review: review, rating: rating }
             )
-            res.status(201).json(updateReview)
+            return res.status(201).json(updateReview)
 
         } else {
 
@@ -250,11 +249,29 @@ export const saveReview = async (req, res) => {
                 rating: rating,
                 turfId: turfId
             })
-            res.status(200).json(addReview)
+            return res.status(200).json(addReview)
         }
 
     } catch (error) {
         console.error(error)
-        res.status(500).json({ status: "error", error: "Internal Server Error" }) 
+        return res.status(500).json({ status: "error", error: "Internal Server Error" }) 
+    }
+}
+
+export const isReview = async (req, res)=> {
+
+    const userId = req.body.userId
+    const turfId = req.body.turfId
+
+    try {
+        const isReviewExists = await Review.findOne({ userId: userId, turfId: turfId })
+        if(isReviewExists) {
+            const reviewCount = await Review.find({ turfId }).count()
+            const totalRating = await Review.find({ turfId })
+            return res.status(200).json({ isReviewExists, reviewCount, totalRating })
+        }
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({ status: "error", error: "Internal Server Error" }) 
     }
 }
